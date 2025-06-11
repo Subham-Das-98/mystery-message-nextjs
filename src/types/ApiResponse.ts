@@ -5,12 +5,13 @@ interface ApiResponse {
   success: boolean;
   message: string;
   status: number;
-  isAcceptingMessage?: boolean;
+  data?: object;
+  isAcceptingMessages?: boolean;
   isVerified?: boolean;
   messages?: Array<Message>;
 }
 
-function sendApiResponse(data: ApiResponse) {
+function sendApiResponse(data: ApiResponse): NextResponse<ApiResponse> {
   return NextResponse.json(data, {
     status: data.status ?? 200,
   });
