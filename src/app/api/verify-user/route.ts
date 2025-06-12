@@ -45,7 +45,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     });
   } catch (error) {
     console.error(
-      "VERIFY_USER_ERROR:: Something went wrong while sending otp",
+      "VERIFY_USER_ERROR:: Something went wrong while sending otp: ",
       error
     );
     return sendApiResponse({

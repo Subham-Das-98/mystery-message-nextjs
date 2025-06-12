@@ -108,7 +108,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       status: 201,
     });
   } catch (error) {
-    console.error("SIGNUP_API_ERROR:: error while creating new account", error);
+    console.error(
+      "SIGNUP_API_ERROR:: error while creating new account: ",
+      error
+    );
     return sendApiResponse({
       success: false,
       message: "SIGNUP_API_ERROR:: failed to create new account",
