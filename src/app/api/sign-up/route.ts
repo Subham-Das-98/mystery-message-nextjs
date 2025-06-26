@@ -27,44 +27,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // verify if email already exists
     const userByEmail = await UserModel.findOne({ email });
-    if (userByEmail) {
-      if (userByEmail.isVerified) {
-        return sendApiResponse({
-          success: false,
-          message: "SIGNUP_API_ERROR:: email already exists",
-          status: 400,
-        });
-      }
-
-      // update user
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const verificationCode = generateOTP(100000, 999999);
-
-      userByEmail.password = hashedPassword;
-      userByEmail.verificationCode = verificationCode;
-      userByEmail.verificationCodeExpiary = setVerificationCodeExpiary(1);
-
-      const emailResponse = await sendVerificationEmail(
-        email,
-        username,
-        verificationCode
-      );
-
-      if (!emailResponse.success) {
-        return sendApiResponse({
-          success: false,
-          message: "SIGNUP_API_ERROR:: failed to send verification email",
-          status: 500,
-        });
-      }
-
-      await userByEmail.save();
-
+    if (userByEmail && userByEmail.isVerified) {
       return sendApiResponse({
-        success: true,
-        message:
-          "Account has been updated successfully. An email has been sent to your account. Please verify.",
-        status: 202,
+        success: false,
+        message: "SIGNUP_API_ERROR:: email already exists",
+        status: 400,
       });
     }
 
@@ -85,11 +52,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     });
 
     // send verification email
-    const emailResponse = await sendVerificationEmail(
-      email,
-      username,
-      verificationCode
-    );
+    const emailResponse = await sendVerificationEmail(email, username, verificationCode);
 
     if (!emailResponse.success) {
       return sendApiResponse({
@@ -103,15 +66,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     return sendApiResponse({
       success: true,
-      message:
-        "New account has been created successfully. An email has been sent to your account. Please verify.",
+      message: "New account has been created successfully. An email has been sent to your account. Please verify.",
       status: 201,
     });
   } catch (error) {
-    console.error(
-      "SIGNUP_API_ERROR:: error while creating new account: ",
-      error
-    );
+    console.error("SIGNUP_API_ERROR:: error while creating new account: ", error);
     return sendApiResponse({
       success: false,
       message: "SIGNUP_API_ERROR:: failed to create new account",
