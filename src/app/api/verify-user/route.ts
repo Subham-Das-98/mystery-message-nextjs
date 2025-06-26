@@ -18,7 +18,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     const isCodeValid = code === user.verificationCode;
-    const isCodeExpiared = new Date(user.verificationCodeExpiary) < new Date();
+    const isCodeExpiared = new Date(user.verificationCodeExpiary) > new Date();
 
     if (!isCodeValid) {
       return sendApiResponse({
@@ -44,10 +44,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       status: 200,
     });
   } catch (error) {
-    console.error(
-      "VERIFY_USER_ERROR:: Something went wrong while sending otp: ",
-      error
-    );
+    console.error("VERIFY_USER_ERROR:: Something went wrong while sending otp: ", error);
     return sendApiResponse({
       success: false,
       message: "Something went wrong while sending otp",
